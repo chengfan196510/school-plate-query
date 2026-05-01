@@ -430,14 +430,6 @@
             <div class="subtitle">车辆信息查询系统</div>
         </div>
         
-        <!-- 统计卡片 -->
-        <div class="stats" id="stats">
-            <div class="stat-card" data-filter="all">
-                <div class="number" id="totalCount">--</div>
-                <div class="label">全部车辆</div>
-            </div>
-        </div>
-        
         <!-- 搜索区域 -->
         <div class="search-box">
             <div class="search-input-wrapper">
@@ -495,12 +487,18 @@
                     item.pinyinInitial = getPinyinInitial(item.name);
                 });
                 
-                // 渲染统计和筛选
-                renderStats();
+                // 渲染筛选
                 renderFilterTabs();
                 
-                // 初始显示全部
-                filterData();
+                // 初始不显示结果，等用户搜索
+                document.getElementById('resultCount').textContent = '0';
+                document.getElementById('resultsContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🔍</div>
+                        <h3>请输入车牌号或车主姓名搜索</h3>
+                        <p>支持模糊匹配，输入即搜索</p>
+                    </div>
+                `;
             } catch (error) {
                 document.getElementById('resultsContainer').innerHTML = `
                     <div class="empty-state">
@@ -548,42 +546,7 @@
             return result;
         }
 
-        // 渲染统计卡片
-        function renderStats() {
-            const types = [...new Set(allData.map(item => item.department))];
-            const colorMap = {
-                '教师车辆': 'blue',
-                '家长车辆': 'red',
-                '临时车辆': 'orange',
-                '后勤车辆': 'teal',
-                '集团车辆': 'green'
-            };
-            const defaultColors = ['blue', 'red', 'orange', 'teal', 'green', 'purple'];
-            let colorIdx = 0;
-            
-            const statsContainer = document.getElementById('stats');
-            const allActive = currentFilters.size === types.length ? ' active' : '';
-            let html = `
-                <div class="stat-card${allActive}" data-filter="all" data-color="purple">
-                    <div class="number">${allData.length}</div>
-                    <div class="label">全部车辆</div>
-                </div>
-            `;
-            
-            types.forEach(type => {
-                const count = allData.filter(item => item.department === type).length;
-                const color = colorMap[type] || defaultColors[colorIdx++ % defaultColors.length];
-                const isActive = currentFilters.has(type) ? ' active' : '';
-                html += `
-                    <div class="stat-card${isActive}" data-filter="${type}" data-color="${color}">
-                        <div class="number">${count}</div>
-                        <div class="label">${type}</div>
-                    </div>
-                `;
-            });
-            
-            statsContainer.innerHTML = html;
-        }
+        // 渲染统计卡片 - 已删除，不再显示
 
         // 渲染车辆类型筛选标签
         function renderFilterTabs() {
@@ -614,7 +577,15 @@
                 searchInput.value = '';
                 searchKeyword = '';
                 document.getElementById('clearBtn').classList.remove('visible');
-                filterData();
+                // 清空后显示提示
+                document.getElementById('resultCount').textContent = '0';
+                document.getElementById('resultsContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🔍</div>
+                        <h3>请输入车牌号或车主姓名搜索</h3>
+                        <p>支持模糊匹配，输入即搜索</p>
+                    </div>
+                `;
             });
             
             // 筛选标签点击（支持多选）
@@ -648,63 +619,22 @@
                         }
                     });
                     
-                    // 更新统计卡片激活状态
-                    document.querySelectorAll('.stat-card').forEach(c => {
-                        if (c.dataset.filter === 'all') {
-                            c.classList.toggle('active', currentFilters.size === [...new Set(allData.map(item => item.department))].length);
-                        } else {
-                            c.classList.toggle('active', currentFilters.has(c.dataset.filter));
-                        }
-                    });
-                    
                     filterData();
                 }
             });
             
-            // 统计卡片点击（支持多选）
-            document.getElementById('stats').addEventListener('click', (e) => {
-                const card = e.target.closest('.stat-card');
-                if (card) {
-                    const filter = card.dataset.filter;
-                    
-                    if (filter === 'all') {
-                        // 点击"全部车辆"：全选
-                        const types = [...new Set(allData.map(item => item.department))];
-                        currentFilters = new Set(types);
-                    } else {
-                        // 点击具体类型：切换
-                        if (currentFilters.has(filter)) {
-                            currentFilters.delete(filter);
-                        } else {
-                            currentFilters.add(filter);
-                        }
-                    }
-                    
-                    // 更新标签激活状态
-                    document.querySelectorAll('.filter-tab').forEach(tab => {
-                        if (tab.dataset.filter === 'all') {
-                            tab.classList.toggle('active', currentFilters.size === [...new Set(allData.map(item => item.department))].length);
-                        } else {
-                            tab.classList.toggle('active', currentFilters.has(tab.dataset.filter));
-                        }
-                    });
-                    
-                    // 更新卡片激活状态
-                    document.querySelectorAll('.stat-card').forEach(c => {
-                        if (c.dataset.filter === 'all') {
-                            c.classList.toggle('active', currentFilters.size === [...new Set(allData.map(item => item.department))].length);
-                        } else {
-                            c.classList.toggle('active', currentFilters.has(c.dataset.filter));
-                        }
-                    });
-                    
-                    filterData();
-                }
-            });
+            // 统计卡片点击 - 已删除
         }
 
         // 筛选数据
         function filterData() {
+            // 没有搜索关键词时不显示结果
+            if (!searchKeyword) {
+                filteredData = [];
+                renderResults();
+                return;
+            }
+            
             filteredData = allData.filter(item => {
                 // 车辆类型筛选（多选）
                 if (currentFilters.size > 0 && !currentFilters.has(item.department)) {
@@ -712,14 +642,10 @@
                 }
                 
                 // 搜索筛选
-                if (searchKeyword) {
-                    const nameMatch = item.name.toLowerCase().includes(searchKeyword) ||
-                                     item.pinyinInitial.toLowerCase().includes(searchKeyword.toUpperCase());
-                    const plateMatch = item.plate.toLowerCase().includes(searchKeyword);
-                    return nameMatch || plateMatch;
-                }
-                
-                return true;
+                const nameMatch = item.name.toLowerCase().includes(searchKeyword) ||
+                                 item.pinyinInitial.toLowerCase().includes(searchKeyword.toUpperCase());
+                const plateMatch = item.plate.toLowerCase().includes(searchKeyword);
+                return nameMatch || plateMatch;
             });
             
             // 按过期状态和名称排序
