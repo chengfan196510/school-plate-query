@@ -70,7 +70,7 @@
       "gender": "男",
       "ticketNumber": "20250315005",
       "area": "宁波",
-      "school": "北仑中学",
+      "school": "春晓中学",
       "examType": "校考",
       "examDate": "2025-03-15",
       "roomNumber": "B201",
@@ -78,8 +78,8 @@
       "idCardLast6": "567890",
       "ticketPath": null,
       "createdAt": "2026-05-08T15:04:42.842Z",
-      "updatedAt": "2026-05-08T15:04:42.842Z"
+      "updatedAt": "2026-05-08T23:15:35.747Z"
     }
   ],
-  "updatedAt": "2026-05-08T15:04:42.842Z"
+  "updatedAt": "2026-05-08T23:15:35.747Z"
 }
