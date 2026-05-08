@@ -6,6 +6,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const AdmZip = require('adm-zip');
 const { readDatabase, writeDatabase, readAdminDatabase, writeAdminDatabase } = require('../controllers/database');
 const authMiddleware = require('../middleware/auth');
 
@@ -492,6 +493,149 @@ router.post('/upload-tickets', authMiddleware, upload.array('files', 100), (req,
     }
 });
 
+const zipUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 500 * 1024 * 1024 }
+});
+
+router.post('/upload-tickets-zip', authMiddleware, zipUpload.single('file'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: '请上传ZIP文件'
+            });
+        }
+
+        if (!req.file.originalname.toLowerCase().endsWith('.zip')) {
+            return res.status(400).json({
+                success: false,
+                message: '仅支持ZIP格式文件'
+            });
+        }
+
+        let zip;
+        try {
+            zip = new AdmZip(req.file.buffer);
+        } catch (e) {
+            return res.status(400).json({
+                success: false,
+                message: '无法解压ZIP文件，文件可能已损坏'
+            });
+        }
+
+        const zipEntries = zip.getEntries();
+        const pdfFiles = zipEntries.filter(entry => 
+            !entry.isDirectory && entry.entryName.toLowerCase().endsWith('.pdf')
+        );
+
+        if (pdfFiles.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'ZIP文件中未找到PDF文件'
+            });
+        }
+
+        if (pdfFiles.length > 100) {
+            return res.status(400).json({
+                success: false,
+                message: `ZIP文件中包含${pdfFiles.length}个PDF文件，超过100个限制`
+            });
+        }
+
+        const db = readDatabase();
+        let matched = 0;
+        const unmatched = [];
+        const results = [];
+        const tempFiles = [];
+
+        for (const entry of pdfFiles) {
+            const filename = path.basename(entry.entryName, '.pdf');
+            const parts = filename.split('_');
+
+            if (parts.length < 2) {
+                unmatched.push({
+                    originalName: entry.entryName,
+                    reason: '文件名格式不正确，应为：考场号_座位号'
+                });
+                continue;
+            }
+
+            const roomNumber = parts[0];
+            const seatNumber = parts[parts.length - 1];
+
+            const student = db.students.find(s => 
+                s.roomNumber === roomNumber && s.seatNumber === seatNumber
+            );
+
+            if (student) {
+                const uniqueFilename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.pdf`;
+                const tempPath = path.join(uploadDir, uniqueFilename);
+
+                try {
+                    fs.writeFileSync(tempPath, entry.getData());
+                    tempFiles.push(tempPath);
+
+                    if (student.ticketPath) {
+                        const oldPath = path.join(__dirname, '..', student.ticketPath);
+                        if (fs.existsSync(oldPath)) {
+                            fs.unlinkSync(oldPath);
+                        }
+                    }
+
+                    student.ticketPath = `/uploads/tickets/${uniqueFilename}`;
+                    student.updatedAt = new Date().toISOString();
+                    matched++;
+                    results.push({
+                        file: entry.entryName,
+                        student: student.name,
+                        ticketNumber: student.ticketNumber,
+                        roomNumber,
+                        seatNumber,
+                        status: 'success'
+                    });
+                } catch (writeError) {
+                    unmatched.push({
+                        originalName: entry.entryName,
+                        reason: '文件保存失败'
+                    });
+                }
+            } else {
+                unmatched.push({
+                    file: entry.entryName,
+                    roomNumber,
+                    seatNumber,
+                    reason: '未找到匹配的考生'
+                });
+            }
+        }
+
+        writeDatabase(db);
+
+        const totalSize = pdfFiles.reduce((sum, entry) => sum + entry.header.size, 0);
+
+        res.json({
+            success: true,
+            message: `ZIP解压完成：共${pdfFiles.length}个文件，成功匹配${matched}个，未匹配${unmatched.length}个`,
+            data: {
+                matched,
+                unmatched,
+                results,
+                summary: {
+                    totalFiles: pdfFiles.length,
+                    totalSize: Math.round(totalSize / 1024 / 1024 * 100) / 100
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Upload tickets ZIP error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'ZIP上传失败：' + error.message
+        });
+    }
+});
+
 router.get('/check-ticket/:id', authMiddleware, (req, res) => {
     try {
         const { id } = req.params;
@@ -505,11 +649,19 @@ router.get('/check-ticket/:id', authMiddleware, (req, res) => {
             });
         }
 
+        let hasTicket = !!student.ticketPath;
+        let ticketExists = false;
+
+        if (hasTicket) {
+            const filePath = path.join(__dirname, '..', student.ticketPath);
+            ticketExists = fs.existsSync(filePath);
+        }
+
         res.json({
             success: true,
             data: {
-                hasTicket: !!student.ticketPath,
-                ticketPath: student.ticketPath
+                hasTicket: hasTicket && ticketExists,
+                ticketPath: ticketExists ? student.ticketPath : null
             }
         });
     } catch (error) {

@@ -219,30 +219,69 @@
                 </section>
 
                 <section id="ticketsTab" class="tab-content">
-                    <div class="tickets-guide">
-                        <h3>准考证上传</h3>
-                        <div class="guide-box">
-                            <p><strong>文件命名规则：</strong></p>
-                            <code>考场号_座位号.pdf</code>
-                            <p class="example">例如：A101_01.pdf、B202_15.pdf</p>
-                            <p class="notice">系统将根据文件名自动匹配考生信息</p>
-                        </div>
+                    <div class="upload-tabs">
+                        <button class="tab-btn active" data-upload-type="zip">压缩包上传</button>
+                        <button class="tab-btn" data-upload-type="pdf">PDF文件上传</button>
                     </div>
-                    <div class="upload-area" id="ticketsDropZone">
-                        <input type="file" id="ticketsFileInput" accept=".pdf" multiple style="display:none;">
-                        <div class="upload-content">
-                            <div class="upload-icon">📄</div>
-                            <p class="upload-text">将 PDF 准考证文件拖拽到此处</p>
-                            <p class="upload-hint">支持多文件上传</p>
-                            <button class="btn-select-file" id="selectTicketsFile">选择文件</button>
-                        </div>
-                        <div class="upload-progress" style="display:none;">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="ticketsProgress"></div>
+                    
+                    <div class="upload-panel" id="zipUploadPanel">
+                        <div class="tickets-guide">
+                            <h3>压缩包上传（推荐）</h3>
+                            <div class="guide-box">
+                                <p><strong>支持格式：</strong>ZIP压缩包</p>
+                                <p><strong>文件数量：</strong>每个压缩包最多100个PDF文件</p>
+                                <p><strong>单个PDF大小：</strong>建议不超过3MB</p>
+                                <p><strong>文件命名规则：</strong></p>
+                                <code>考场号_座位号.pdf</code>
+                                <p class="example">例如：A101_01.pdf、B202_15.pdf</p>
+                                <p class="notice">系统将自动解压并根据文件名匹配考生信息</p>
                             </div>
-                            <span class="progress-text" id="ticketsProgressText">上传中...</span>
+                        </div>
+                        <div class="upload-area" id="zipDropZone">
+                            <input type="file" id="zipFileInput" accept=".zip" style="display:none;">
+                            <div class="upload-content">
+                                <div class="upload-icon">📦</div>
+                                <p class="upload-text">将 ZIP 压缩包拖拽到此处</p>
+                                <p class="upload-hint">或点击选择文件（单个文件最大500MB）</p>
+                                <button class="btn-select-file" id="selectZipFile">选择ZIP文件</button>
+                            </div>
+                            <div class="upload-progress" style="display:none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="zipProgress"></div>
+                                </div>
+                                <span class="progress-text" id="zipProgressText">上传中...</span>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="upload-panel" id="pdfUploadPanel" style="display: none;">
+                        <div class="tickets-guide">
+                            <h3>PDF文件上传</h3>
+                            <div class="guide-box">
+                                <p><strong>支持格式：</strong>PDF文件</p>
+                                <p><strong>文件命名规则：</strong></p>
+                                <code>考场号_座位号.pdf</code>
+                                <p class="example">例如：A101_01.pdf、B202_15.pdf</p>
+                                <p class="notice">系统将根据文件名自动匹配考生信息</p>
+                            </div>
+                        </div>
+                        <div class="upload-area" id="ticketsDropZone">
+                            <input type="file" id="ticketsFileInput" accept=".pdf" multiple style="display:none;">
+                            <div class="upload-content">
+                                <div class="upload-icon">📄</div>
+                                <p class="upload-text">将 PDF 准考证文件拖拽到此处</p>
+                                <p class="upload-hint">支持多文件上传（单个文件最大10MB）</p>
+                                <button class="btn-select-file" id="selectTicketsFile">选择PDF文件</button>
+                            </div>
+                            <div class="upload-progress" style="display:none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="ticketsProgress"></div>
+                                </div>
+                                <span class="progress-text" id="ticketsProgressText">上传中...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="upload-result" id="ticketsResult" style="display:none;">
                         <h4>上传结果</h4>
                         <div class="result-summary">
@@ -772,6 +811,134 @@
                 } else {
                     progressText.textContent = '导入失败';
                     showToast(result.message || '导入失败', 'error');
+                }
+            } catch (error) {
+                clearInterval(interval);
+                progressArea.style.display = 'none';
+                showToast('上传失败，请稍后重试', 'error');
+            }
+        }
+
+        document.querySelectorAll('.upload-tabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.upload-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const type = btn.dataset.uploadType;
+                document.getElementById('zipUploadPanel').style.display = type === 'zip' ? 'block' : 'none';
+                document.getElementById('pdfUploadPanel').style.display = type === 'pdf' ? 'block' : 'none';
+            });
+        });
+
+        const zipDropZone = document.getElementById('zipDropZone');
+        const zipFileInput = document.getElementById('zipFileInput');
+        
+        zipDropZone.addEventListener('click', () => zipFileInput.click());
+        document.getElementById('selectZipFile').addEventListener('click', (e) => {
+            e.stopPropagation();
+            zipFileInput.click();
+        });
+        
+        zipDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            zipDropZone.classList.add('dragover');
+        });
+        
+        zipDropZone.addEventListener('dragleave', () => {
+            zipDropZone.classList.remove('dragover');
+        });
+        
+        zipDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zipDropZone.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files).filter(f => f.name.toLowerCase().endsWith('.zip'));
+            if (files.length > 0) {
+                uploadZipFile(files[0]);
+            } else {
+                showToast('请上传 ZIP 格式的压缩包', 'error');
+            }
+        });
+        
+        zipFileInput.addEventListener('change', () => {
+            if (zipFileInput.files.length > 0) {
+                const file = zipFileInput.files[0];
+                if (file.name.toLowerCase().endsWith('.zip')) {
+                    uploadZipFile(file);
+                } else {
+                    showToast('请上传 ZIP 格式的压缩包', 'error');
+                }
+            }
+        });
+
+        async function uploadZipFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const progressArea = zipDropZone.querySelector('.upload-progress');
+            const progressFill = document.getElementById('zipProgress');
+            const progressText = document.getElementById('zipProgressText');
+            const resultArea = document.getElementById('ticketsResult');
+            
+            progressArea.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressText.textContent = '正在上传并解压...';
+            resultArea.style.display = 'none';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                if (progress <= 90) {
+                    progressFill.style.width = progress + '%';
+                }
+            }, 100);
+            
+            try {
+                const response = await fetch(`${API_BASE}/upload-tickets-zip`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                clearInterval(interval);
+                progressFill.style.width = '100%';
+                
+                if (result.success) {
+                    progressText.textContent = '上传完成！';
+                    resultArea.style.display = 'block';
+                    document.getElementById('matchedCount').textContent = `匹配成功: ${result.data.matched}`;
+                    document.getElementById('unmatchedCount').textContent = `未匹配: ${result.data.unmatched.length}`;
+                    
+                    let content = '';
+                    if (result.data.summary) {
+                        content += `<p class="result-summary-text">总计 ${result.data.summary.totalFiles} 个文件`;
+                        if (result.data.summary.totalSize) {
+                            content += `，约 ${result.data.summary.totalSize} MB</p>`;
+                        }
+                    }
+                    if (result.data.results && result.data.results.length > 0) {
+                        content += '<p class="matched-title">成功匹配：</p><ul class="result-list">';
+                        result.data.results.forEach(r => {
+                            content += `<li>✓ ${r.file} → ${r.student} (${r.ticketNumber})</li>`;
+                        });
+                        content += '</ul>';
+                    }
+                    if (result.data.unmatched && result.data.unmatched.length > 0) {
+                        content += '<p class="unmatched-title">未能匹配：</p><ul class="result-list error">';
+                        result.data.unmatched.forEach(u => {
+                            content += `<li>✗ ${u.file || u.originalName} - ${u.reason}</li>`;
+                        });
+                        content += '</ul>';
+                    }
+                    document.getElementById('ticketsResultContent').innerHTML = content;
+                    loadStats();
+                    if (document.querySelector('.nav-item[data-tab="students"]').classList.contains('active')) {
+                        loadStudents(currentPage);
+                    }
+                } else {
+                    progressText.textContent = '上传失败';
+                    showToast(result.message || '上传失败', 'error');
                 }
             } catch (error) {
                 clearInterval(interval);
