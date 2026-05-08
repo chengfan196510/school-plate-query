@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宁波诺丁汉大学附属中学 - 准考证查询系统</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&family=Source+Serif+4:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <header class="header">
+            <div class="header-content">
+                <div class="emblem">
+                    <svg viewBox="0 0 60 60" class="emblem-icon">
+                        <circle cx="30" cy="30" r="28" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="30" cy="30" r="24" fill="none" stroke="currentColor" stroke-width="1"/>
+                        <path d="M30 8 L33 15 L30 12 L27 15 Z M30 52 L33 45 L30 48 L27 45 Z M8 30 L15 33 L12 30 L15 27 Z M52 30 L45 33 L48 30 L45 27 Z" fill="currentColor"/>
+                        <text x="30" y="34" text-anchor="middle" font-size="10" font-family="serif" fill="currentColor">UNNC</text>
+                    </svg>
+                </div>
+                <div class="header-text">
+                    <h1 class="school-name">宁波诺丁汉大学附属中学</h1>
+                    <p class="system-title"> Examination Admission Ticket System</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="hero-section">
+                <div class="decorative-border top-left"></div>
+                <div class="decorative-border top-right"></div>
+                <div class="hero-content">
+                    <h2 class="main-title">准考证查询系统</h2>
+                    <p class="subtitle">Admission Ticket Query System</p>
+                    <div class="ornament">
+                        <span class="ornament-line"></span>
+                        <span class="ornament-diamond">◆</span>
+                        <span class="ornament-line"></span>
+                    </div>
+                </div>
+                <div class="decorative-border bottom-left"></div>
+                <div class="decorative-border bottom-right"></div>
+            </div>
+
+            <section class="query-section">
+                <div class="query-card">
+                    <div class="card-header">
+                        <span class="card-icon">🔍</span>
+                        <h3>查询条件</h3>
+                    </div>
+                    <form id="queryForm" class="query-form">
+                        <div class="form-group">
+                            <label for="studentName">
+                                <span class="label-cn">学生姓名</span>
+                                <span class="label-en">Student Name</span>
+                            </label>
+                            <input type="text" id="studentName" name="name" 
+                                   placeholder="请输入学生姓名" 
+                                   autocomplete="off"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="idCardLast6">
+                                <span class="label-cn">身份证后六位</span>
+                                <span class="label-en">ID Card Last 6 Digits</span>
+                            </label>
+                            <input type="text" id="idCardLast6" name="idCardLast6" 
+                                   placeholder="请输入身份证后6位" 
+                                   maxlength="6"
+                                   pattern="[0-9]{6}"
+                                   inputmode="numeric"
+                                   autocomplete="off"
+                                   required>
+                        </div>
+                        <button type="submit" class="btn-query" id="queryBtn">
+                            <span class="btn-text">查询</span>
+                            <span class="btn-loading" style="display:none;">
+                                <span class="spinner"></span>
+                                查询中...
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="result-section" id="resultSection" style="display: none;">
+                <div class="result-card">
+                    <div class="card-header success">
+                        <span class="card-icon">✓</span>
+                        <h3>查询结果</h3>
+                    </div>
+                    <div class="student-info">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">学生姓名</span>
+                                <span class="info-value" id="infoName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">性别</span>
+                                <span class="info-value" id="infoGender">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">准考证号</span>
+                                <span class="info-value ticket-number" id="infoTicketNumber">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">区域</span>
+                                <span class="info-value" id="infoArea">-</span>
+                            </div>
+                            <div class="info-item full-width">
+                                <span class="info-label">初中学校</span>
+                                <span class="info-value" id="infoSchool">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">考试类型</span>
+                                <span class="info-value" id="infoExamType">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">考试日期</span>
+                                <span class="info-value" id="infoExamDate">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">考场号</span>
+                                <span class="info-value room" id="infoRoomNumber">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">座位号</span>
+                                <span class="info-value seat" id="infoSeatNumber">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ticket-action">
+                        <div id="ticketStatus" class="ticket-status">
+                            <span class="status-icon loading">⏳</span>
+                            <span class="status-text">正在检查准考证状态...</span>
+                        </div>
+                        <button type="button" class="btn-download" id="downloadBtn" disabled>
+                            <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7,10 12,15 17,10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            <span class="btn-text">下载准考证</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="error-section" id="errorSection" style="display: none;">
+                <div class="error-card">
+                    <div class="error-icon">!</div>
+                    <h3 class="error-title">未找到匹配的的考生信息</h3>
+                    <p class="error-message">请核实您输入的学生姓名和身份证后六位是否正确</p>
+                    <button type="button" class="btn-retry" onclick="resetQuery()">
+                        重新查询
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p class="footer-text">宁波诺丁汉大学附属中学 © 2025</p>
+                <p class="footer-sub">University of Nottingham Ningbo China Affiliated High School</p>
+            </div>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast">
+        <span class="toast-message"></span>
+    </div>
+
+    <script>
+        let currentStudentId = null;
+
+        document.getElementById('queryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('studentName').value.trim();
+            const idCardLast6 = document.getElementById('idCardLast6').value.trim();
+            
+            if (!name || !idCardLast6) {
+                showToast('请填写完整信息', 'error');
+                return;
+            }
+            
+            if (!/^\d{6}$/.test(idCardLast6)) {
+                showToast('身份证后六位必须为6位数字', 'error');
+                return;
+            }
+            
+            const queryBtn = document.getElementById('queryBtn');
+            queryBtn.disabled = true;
+            queryBtn.querySelector('.btn-text').style.display = 'none';
+            queryBtn.querySelector('.btn-loading').style.display = 'inline-flex';
+            
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('errorSection').style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, idCardLast6 })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayResult(result.data);
+                } else {
+                    showError(result.message);
+                }
+            } catch (error) {
+                showError('网络错误，请稍后重试');
+            } finally {
+                queryBtn.disabled = false;
+                queryBtn.querySelector('.btn-text').style.display = 'inline';
+                queryBtn.querySelector('.btn-loading').style.display = 'none';
+            }
+        });
+
+        document.getElementById('idCardLast6').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '').slice(0, 6);
+        });
+
+        function displayResult(data) {
+            currentStudentId = data.id;
+            
+            document.getElementById('infoName').textContent = data.name;
+            document.getElementById('infoGender').textContent = data.gender;
+            document.getElementById('infoTicketNumber').textContent = data.ticketNumber;
+            document.getElementById('infoArea').textContent = data.area;
+            document.getElementById('infoSchool').textContent = data.school;
+            document.getElementById('infoExamType').textContent = data.examType;
+            document.getElementById('infoExamDate').textContent = data.examDate;
+            document.getElementById('infoRoomNumber').textContent = data.roomNumber;
+            document.getElementById('infoSeatNumber').textContent = data.seatNumber;
+            
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('errorSection').style.display = 'none';
+            
+            updateTicketStatus(data.hasTicket);
+        }
+
+        async function updateTicketStatus(hasTicket) {
+            const statusEl = document.getElementById('ticketStatus');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            if (hasTicket) {
+                statusEl.innerHTML = `
+                    <span class="status-icon success">✓</span>
+                    <span class="status-text">准考证已就绪，可点击下载</span>
+                `;
+                downloadBtn.disabled = false;
+                downloadBtn.classList.add('available');
+            } else {
+                statusEl.innerHTML = `
+                    <span class="status-icon warning">⏰</span>
+                    <span class="status-text">准考证尚未上传，请联系学校管理员</span>
+                `;
+                downloadBtn.disabled = true;
+                downloadBtn.classList.remove('available');
+            }
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', async () => {
+            if (!currentStudentId) return;
+            
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.disabled = true;
+            downloadBtn.innerHTML = `
+                <span class="spinner"></span>
+                <span class="btn-text">下载中...</span>
+            `;
+            
+            try {
+                const response = await fetch(`/api/download/${currentStudentId}`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `准考证_${document.getElementById('infoName').textContent}_${document.getElementById('infoTicketNumber').textContent}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    showToast('下载成功', 'success');
+                } else {
+                    const result = await response.json();
+                    showToast(result.message || '下载失败', 'error');
+                }
+            } catch (error) {
+                showToast('下载失败，请稍后重试', 'error');
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = `
+                    <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7,10 12,15 17,10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span class="btn-text">下载准考证</span>
+                `;
+            }
+        });
+
+        function showError(message) {
+            document.getElementById('errorSection').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+        }
+
+        function resetQuery() {
+            document.getElementById('queryForm').reset();
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('errorSection').style.display = 'none';
+            currentStudentId = null;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.querySelector('.toast-message').textContent = message;
+            toast.className = `toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,671 @@
+:root {
+    --primary: #8B1538;
+    --primary-light: #A91D45;
+    --primary-dark: #6B1028;
+    --secondary: #1B3A5F;
+    --accent: #C9A227;
+    --accent-light: #DDB74A;
+    --background: #FDF8F3;
+    --background-dark: #F5EDE3;
+    --surface: #FFFFFF;
+    --text-primary: #2C1810;
+    --text-secondary: #5D4E42;
+    --text-light: #8B7B6B;
+    --border: #D4C5B5;
+    --border-light: #E8DDD0;
+    --success: #2D5A27;
+    --error: #B91C1C;
+    --warning: #B45309;
+    --shadow-sm: 0 2px 8px rgba(44, 24, 16, 0.08);
+    --shadow-md: 0 4px 16px rgba(44, 24, 16, 0.12);
+    --shadow-lg: 0 8px 32px rgba(44, 24, 16, 0.16);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Source Serif 4', 'Noto Serif SC', serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    transition: opacity 0.3s ease;
+}
+
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: 
+        linear-gradient(135deg, rgba(139, 21, 56, 0.03) 0%, transparent 50%),
+        linear-gradient(225deg, rgba(27, 58, 95, 0.03) 0%, transparent 50%),
+        var(--background);
+}
+
+.header {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--background) 100%);
+    border-bottom: 2px solid var(--primary);
+    padding: 1.5rem 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.emblem {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.emblem-icon {
+    width: 100%;
+    height: 100%;
+    color: var(--primary);
+}
+
+.header-text {
+    text-align: left;
+}
+
+.school-name {
+    font-family: 'Playfair Display', 'Noto Serif SC', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 0.05em;
+    line-height: 1.3;
+}
+
+.system-title {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+}
+
+.main-content {
+    flex: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    width: 100%;
+}
+
+.hero-section {
+    position: relative;
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+}
+
+.decorative-border {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--accent);
+    opacity: 0.6;
+}
+
+.decorative-border.top-left {
+    top: 0;
+    left: 0;
+    border-right: none;
+    border-bottom: none;
+}
+
+.decorative-border.top-right {
+    top: 0;
+    right: 0;
+    border-left: none;
+    border-bottom: none;
+}
+
+.decorative-border.bottom-left {
+    bottom: 0;
+    left: 0;
+    border-right: none;
+    border-top: none;
+}
+
+.decorative-border.bottom-right {
+    bottom: 0;
+    right: 0;
+    border-left: none;
+    border-top: none;
+}
+
+.hero-content {
+    padding: 1rem;
+}
+
+.main-title {
+    font-family: 'Playfair Display', 'Noto Serif SC', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+    animation: fadeInUp 0.8s ease;
+}
+
+.subtitle {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: fadeInUp 0.8s ease 0.1s both;
+}
+
+.ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+.ornament-line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.ornament-diamond {
+    color: var(--accent);
+    font-size: 0.8rem;
+}
+
+.query-section {
+    animation: fadeInUp 0.8s ease 0.3s both;
+}
+
+.query-card,
+.result-card,
+.error-card {
+    background: var(--surface);
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.card-header.success {
+    background: linear-gradient(135deg, var(--success) 0%, #1E4620 100%);
+}
+
+.card-icon {
+    font-size: 1.25rem;
+}
+
+.card-header h3 {
+    font-family: 'Playfair Display', 'Noto Serif SC', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.query-form {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.label-cn {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    display: block;
+}
+
+.label-en {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    letter-spacing: 0.05em;
+    display: block;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-family: 'Source Serif 4', 'Noto Serif SC', serif;
+    font-size: 1rem;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    background: var(--background);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(139, 21, 56, 0.1);
+}
+
+.form-group input::placeholder {
+    color: var(--text-light);
+}
+
+.btn-query {
+    width: 100%;
+    padding: 1rem;
+    font-family: 'Playfair Display', 'Noto Serif SC', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-query:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-query:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-query:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.btn-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.result-section {
+    margin-top: 1.5rem;
+    animation: fadeInUp 0.5s ease;
+}
+
+.student-info {
+    padding: 1.5rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.info-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    letter-spacing: 0.05em;
+}
+
+.info-value {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.info-value.ticket-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--primary);
+    letter-spacing: 0.1em;
+}
+
+.info-value.room,
+.info-value.seat {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+.ticket-action {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.ticket-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--background);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.status-icon {
+    font-size: 1rem;
+}
+
+.status-icon.success {
+    color: var(--success);
+}
+
+.status-icon.warning {
+    color: var(--warning);
+}
+
+.status-icon.loading {
+    animation: spin 1s linear infinite;
+}
+
+.btn-download {
+    width: 100%;
+    max-width: 280px;
+    padding: 1rem 1.5rem;
+    font-family: 'Playfair Display', 'Noto Serif SC', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-download.available:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-download:disabled {
+    background: var(--border);
+    color: var(--text-light);
+    cursor: not-allowed;
+}
+
+.download-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.error-section {
+    margin-top: 1.5rem;
+    animation: fadeInUp 0.5s ease;
+}
+
+.error-card {
+    text-align: center;
+    padding: 2rem;
+}
+
+.error-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, var(--error) 0%, #991B1B 100%);
+    color: white;
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.error-message {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.btn-retry {
+    padding: 0.75rem 2rem;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-retry:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-text {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.footer-sub {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    letter-spacing: 0.1em;
+    margin-top: 0.25rem;
+}
+
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--text-primary);
+    color: white;
+    padding: 0.875rem 1.5rem;
+    border-radius: 4px;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.9rem;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.toast.success {
+    background: var(--success);
+}
+
+.toast.error {
+    background: var(--error);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem 1.5rem;
+    }
+
+    .header-content {
+        gap: 1rem;
+    }
+
+    .emblem {
+        width: 50px;
+        height: 50px;
+    }
+
+    .school-name {
+        font-size: 1.2rem;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    .main-title {
+        font-size: 1.8rem;
+    }
+
+    .subtitle {
+        font-size: 0.85rem;
+    }
+
+    .decorative-border {
+        width: 30px;
+        height: 30px;
+    }
+
+    .ornament-line {
+        width: 40px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-item.full-width {
+        grid-column: 1;
+    }
+
+    .query-form {
+        padding: 1rem;
+    }
+
+    .student-info {
+        padding: 1rem;
+    }
+
+    .ticket-action {
+        padding: 1rem;
+    }
+
+    .footer {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .header-text {
+        text-align: center;
+    }
+
+    .main-title {
+        font-size: 1.5rem;
+    }
+
+    .form-group input {
+        padding: 0.75rem;
+        font-size: 16px;
+    }
+
+    .btn-query,
+    .btn-download {
+        padding: 0.875rem 1rem;
+        font-size: 1rem;
+    }
+}

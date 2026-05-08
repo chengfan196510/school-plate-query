@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 宁波诺丁汉大学附属中学</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&family=Source+Serif+4:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <div id="loginPage" class="login-page">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-emblem">
+                    <svg viewBox="0 0 80 80">
+                        <circle cx="40" cy="40" r="38" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="40" cy="40" r="32" fill="none" stroke="currentColor" stroke-width="1"/>
+                        <path d="M40 10 L44 18 L40 14 L36 18 Z M40 70 L44 62 L40 66 L36 62 Z M10 40 L18 44 L14 40 L18 36 Z M70 40 L62 44 L66 40 L62 36 Z" fill="currentColor"/>
+                        <text x="40" y="45" text-anchor="middle" font-size="12" font-family="serif" fill="currentColor">ADMIN</text>
+                    </svg>
+                </div>
+                <h1 class="login-title">管理后台</h1>
+                <p class="login-subtitle">Administration Portal</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">
+                        <span class="label-icon">👤</span>
+                        用户名
+                    </label>
+                    <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">
+                        <span class="label-icon">🔑</span>
+                        密码
+                    </label>
+                    <input type="password" id="password" name="password" placeholder="请输入密码" required>
+                </div>
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span class="btn-text">登 录</span>
+                    <span class="btn-loading" style="display:none;">
+                        <span class="spinner"></span>
+                        登录中...
+                    </span>
+                </button>
+            </form>
+            <div class="login-footer">
+                <a href="/" class="back-link">← 返回准考证查询</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboardPage" class="dashboard-page" style="display: none;">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-emblem">
+                    <svg viewBox="0 0 40 40">
+                        <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M20 5 L22 9 L20 7 L18 9 Z M20 35 L22 31 L20 33 L18 31 Z M5 20 L9 22 L7 20 L9 18 Z M35 20 L31 22 L33 20 L31 18 Z" fill="currentColor"/>
+                        <text x="20" y="23" text-anchor="middle" font-size="6" font-family="serif" fill="currentColor">UNNC</text>
+                    </svg>
+                </div>
+                <div class="sidebar-title">
+                    <span>校考管理</span>
+                    <small>Exam Admin</small>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-tab="overview">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">数据概览</span>
+                </li>
+                <li class="nav-item" data-tab="students">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-text">考生管理</span>
+                </li>
+                <li class="nav-item" data-tab="import">
+                    <span class="nav-icon">📥</span>
+                    <span class="nav-text">批量导入</span>
+                </li>
+                <li class="nav-item" data-tab="tickets">
+                    <span class="nav-icon">📄</span>
+                    <span class="nav-text">准考证上传</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-name" id="userName">管理员</span>
+                    <button class="btn-logout" id="logoutBtn">退出登录</button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="content-header">
+                <button class="btn-menu-toggle" id="menuToggle">☰</button>
+                <h2 class="page-title" id="pageTitle">数据概览</h2>
+                <div class="header-actions">
+                    <a href="/" target="_blank" class="btn-preview">查看前台 ↗</a>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <section id="overviewTab" class="tab-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon total">👥</div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="statTotal">0</span>
+                                <span class="stat-label">考生总数</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon uploaded">✓</div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="statUploaded">0</span>
+                                <span class="stat-label">已上传准考证</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon pending">⏳</div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="statPending">0</span>
+                                <span class="stat-label">待上传</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overview-info">
+                        <div class="info-card">
+                            <h3>使用说明</h3>
+                            <ul>
+                                <li>考生管理：添加、编辑、删除考生信息</li>
+                                <li>批量导入：上传 CSV/Excel 文件批量导入考生</li>
+                                <li>准考证上传：上传 PDF 格式的准考证，文件名格式为 <code>考场号_座位号.pdf</code></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="studentsTab" class="tab-content">
+                    <div class="toolbar">
+                        <div class="toolbar-left">
+                            <input type="text" class="search-input" id="studentSearch" placeholder="搜索姓名、准考证号、学校...">
+                            <button class="btn-toolbar" id="searchBtn">🔍 搜索</button>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="btn-toolbar primary" id="addStudentBtn">+ 新增考生</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="studentsTable">
+                            <thead>
+                                <tr>
+                                    <th>姓名</th>
+                                    <th>性别</th>
+                                    <th>准考证号</th>
+                                    <th>学校</th>
+                                    <th>考场号</th>
+                                    <th>座位号</th>
+                                    <th>准考证</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <tr class="loading-row">
+                                    <td colspan="8">加载中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination">
+                        <button class="btn-page" id="prevPage" disabled>上一页</button>
+                        <span class="page-info" id="pageInfo">第 1 页，共 1 页</span>
+                        <button class="btn-page" id="nextPage" disabled>下一页</button>
+                    </div>
+                </section>
+
+                <section id="importTab" class="tab-content">
+                    <div class="import-guide">
+                        <h3>批量导入考生信息</h3>
+                        <div class="guide-steps">
+                            <div class="step">
+                                <span class="step-num">1</span>
+                                <span class="step-text">下载模板文件</span>
+                                <button class="btn-download-template" id="downloadTemplate">📥 下载 CSV 模板</button>
+                            </div>
+                            <div class="step">
+                                <span class="step-num">2</span>
+                                <span class="step-text">填写考生信息（必填：name, gender, ticketNumber, idCardLast6）</span>
+                            </div>
+                            <div class="step">
+                                <span class="step-num">3</span>
+                                <span class="step-text">上传文件</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="upload-area" id="importDropZone">
+                        <input type="file" id="importFileInput" accept=".csv,.xlsx,.xls" style="display:none;">
+                        <div class="upload-content">
+                            <div class="upload-icon">📁</div>
+                            <p class="upload-text">将 CSV 或 Excel 文件拖拽到此处</p>
+                            <p class="upload-hint">或点击选择文件</p>
+                            <button class="btn-select-file" id="selectImportFile">选择文件</button>
+                        </div>
+                        <div class="upload-progress" style="display:none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="importProgress"></div>
+                            </div>
+                            <span class="progress-text" id="importProgressText">上传中...</span>
+                        </div>
+                    </div>
+                    <div class="import-result" id="importResult" style="display:none;">
+                        <h4>导入结果</h4>
+                        <div id="importResultContent"></div>
+                    </div>
+                </section>
+
+                <section id="ticketsTab" class="tab-content">
+                    <div class="tickets-guide">
+                        <h3>准考证上传</h3>
+                        <div class="guide-box">
+                            <p><strong>文件命名规则：</strong></p>
+                            <code>考场号_座位号.pdf</code>
+                            <p class="example">例如：A101_01.pdf、B202_15.pdf</p>
+                            <p class="notice">系统将根据文件名自动匹配考生信息</p>
+                        </div>
+                    </div>
+                    <div class="upload-area" id="ticketsDropZone">
+                        <input type="file" id="ticketsFileInput" accept=".pdf" multiple style="display:none;">
+                        <div class="upload-content">
+                            <div class="upload-icon">📄</div>
+                            <p class="upload-text">将 PDF 准考证文件拖拽到此处</p>
+                            <p class="upload-hint">支持多文件上传</p>
+                            <button class="btn-select-file" id="selectTicketsFile">选择文件</button>
+                        </div>
+                        <div class="upload-progress" style="display:none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="ticketsProgress"></div>
+                            </div>
+                            <span class="progress-text" id="ticketsProgressText">上传中...</span>
+                        </div>
+                    </div>
+                    <div class="upload-result" id="ticketsResult" style="display:none;">
+                        <h4>上传结果</h4>
+                        <div class="result-summary">
+                            <span class="result-badge success" id="matchedCount">匹配成功: 0</span>
+                            <span class="result-badge warning" id="unmatchedCount">未匹配: 0</span>
+                        </div>
+                        <div id="ticketsResultContent"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="studentModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">新增考生</h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <form id="studentForm" class="modal-form">
+                <input type="hidden" id="studentId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formName">姓名 <span class="required">*</span></label>
+                        <input type="text" id="formName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="formGender">性别</label>
+                        <select id="formGender">
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formTicketNumber">准考证号 <span class="required">*</span></label>
+                        <input type="text" id="formTicketNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="formIdCardLast6">身份证后6位 <span class="required">*</span></label>
+                        <input type="text" id="formIdCardLast6" maxlength="6" pattern="[0-9]{6}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formArea">区域</label>
+                        <input type="text" id="formArea" value="宁波">
+                    </div>
+                    <div class="form-group">
+                        <label for="formSchool">学校</label>
+                        <input type="text" id="formSchool">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formExamType">考试类型</label>
+                        <select id="formExamType">
+                            <option value="校考">校考</option>
+                            <option value="面试">面试</option>
+                            <option value="笔试">笔试</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="formExamDate">考试日期</label>
+                        <input type="date" id="formExamDate">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="formRoomNumber">考场号</label>
+                        <input type="text" id="formRoomNumber">
+                    </div>
+                    <div class="form-group">
+                        <label for="formSeatNumber">座位号</label>
+                        <input type="text" id="formSeatNumber">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelBtn">取消</button>
+                    <button type="submit" class="btn-submit">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="confirm-modal" id="confirmModal">
+        <div class="confirm-backdrop"></div>
+        <div class="confirm-content">
+            <div class="confirm-icon">⚠️</div>
+            <h3 class="confirm-title">确认删除</h3>
+            <p class="confirm-message" id="confirmMessage">确定要删除该考生吗？</p>
+            <div class="confirm-actions">
+                <button class="btn-confirm-cancel" id="confirmCancel">取消</button>
+                <button class="btn-confirm-delete" id="confirmDelete">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <span class="toast-message"></span>
+    </div>
+
+    <script>
+        const API_BASE = '/api/admin';
+        let token = localStorage.getItem('adminToken');
+        let currentUser = null;
+        let currentPage = 1;
+        let totalPages = 1;
+        let searchKeyword = '';
+        let editingStudent = null;
+        let deletingStudentId = null;
+
+        function checkAuth() {
+            if (token) {
+                showDashboard();
+                loadStats();
+            } else {
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboardPage').style.display = 'none';
+        }
+
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'flex';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            loginBtn.disabled = true;
+            loginBtn.querySelector('.btn-text').style.display = 'none';
+            loginBtn.querySelector('.btn-loading').style.display = 'inline-flex';
+            
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    token = result.token;
+                    currentUser = result.user;
+                    localStorage.setItem('adminToken', token);
+                    document.getElementById('userName').textContent = currentUser.username;
+                    showDashboard();
+                    loadStats();
+                    showToast('登录成功', 'success');
+                } else {
+                    showToast(result.message || '登录失败', 'error');
+                }
+            } catch (error) {
+                showToast('网络错误，请稍后重试', 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.querySelector('.btn-text').style.display = 'inline';
+                loginBtn.querySelector('.btn-loading').style.display = 'none';
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            token = null;
+            currentUser = null;
+            localStorage.removeItem('adminToken');
+            showLogin();
+            document.getElementById('loginForm').reset();
+        });
+
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+        });
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.dataset.tab;
+                switchTab(tab);
+            });
+        });
+
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`${tab}Tab`).classList.add('active');
+            
+            const titles = { overview: '数据概览', students: '考生管理', import: '批量导入', tickets: '准考证上传' };
+            document.getElementById('pageTitle').textContent = titles[tab] || tab;
+            
+            if (tab === 'students') {
+                loadStudents();
+            } else if (tab === 'overview') {
+                loadStats();
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('statTotal').textContent = result.data.total;
+                    document.getElementById('statUploaded').textContent = result.data.uploaded;
+                    document.getElementById('statPending').textContent = result.data.pending;
+                }
+            } catch (error) {
+                console.error('Load stats error:', error);
+            }
+        }
+
+        async function loadStudents(page = 1) {
+            currentPage = page;
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="8">加载中...</td></tr>';
+            
+            try {
+                const params = new URLSearchParams({ page, limit: 15, search: searchKeyword });
+                const response = await fetch(`${API_BASE}/students?${params}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    totalPages = result.data.pagination.totalPages;
+                    renderStudentsTable(result.data.students);
+                    updatePagination(result.data.pagination);
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="8" class="error-cell">加载失败</td></tr>';
+            }
+        }
+
+        function renderStudentsTable(students) {
+            const tbody = document.getElementById('studentsTableBody');
+            
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-cell">暂无数据</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = students.map(s => `
+                <tr data-id="${s.id}">
+                    <td><strong>${s.name}</strong></td>
+                    <td>${s.gender}</td>
+                    <td class="ticket-num">${s.ticketNumber}</td>
+                    <td>${s.school || '-'}</td>
+                    <td>${s.roomNumber || '-'}</td>
+                    <td>${s.seatNumber || '-'}</td>
+                    <td>
+                        ${s.ticketPath 
+                            ? '<span class="badge success">已上传</span>' 
+                            : '<span class="badge warning">待上传</span>'}
+                    </td>
+                    <td>
+                        <button class="btn-action edit" onclick="editStudent('${s.id}')">编辑</button>
+                        <button class="btn-action delete" onclick="confirmDelete('${s.id}', '${s.name}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updatePagination(pagination) {
+            document.getElementById('pageInfo').textContent = `第 ${pagination.page} 页，共 ${pagination.totalPages} 页`;
+            document.getElementById('prevPage').disabled = pagination.page <= 1;
+            document.getElementById('nextPage').disabled = pagination.page >= pagination.totalPages;
+        }
+
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) loadStudents(currentPage - 1);
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            if (currentPage < totalPages) loadStudents(currentPage + 1);
+        });
+
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            searchKeyword = document.getElementById('studentSearch').value;
+            loadStudents(1);
+        });
+
+        document.getElementById('studentSearch').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchKeyword = document.getElementById('studentSearch').value;
+                loadStudents(1);
+            }
+        });
+
+        document.getElementById('addStudentBtn').addEventListener('click', () => {
+            editingStudent = null;
+            document.getElementById('modalTitle').textContent = '新增考生';
+            document.getElementById('studentForm').reset();
+            document.getElementById('studentId').value = '';
+            document.getElementById('formArea').value = '宁波';
+            document.getElementById('formGender').value = '男';
+            document.getElementById('formExamType').value = '校考';
+            openModal();
+        });
+
+        window.editStudent = async function(id) {
+            try {
+                const response = await fetch(`${API_BASE}/students?page=1&limit=100`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                const student = result.data.students.find(s => s.id === id);
+                
+                if (student) {
+                    editingStudent = student;
+                    document.getElementById('modalTitle').textContent = '编辑考生';
+                    document.getElementById('studentId').value = student.id;
+                    document.getElementById('formName').value = student.name;
+                    document.getElementById('formGender').value = student.gender;
+                    document.getElementById('formTicketNumber').value = student.ticketNumber;
+                    document.getElementById('formIdCardLast6').value = student.idCardLast6;
+                    document.getElementById('formArea').value = student.area;
+                    document.getElementById('formSchool').value = student.school;
+                    document.getElementById('formExamType').value = student.examType;
+                    document.getElementById('formExamDate').value = student.examDate;
+                    document.getElementById('formRoomNumber').value = student.roomNumber;
+                    document.getElementById('formSeatNumber').value = student.seatNumber;
+                    openModal();
+                }
+            } catch (error) {
+                showToast('获取考生信息失败', 'error');
+            }
+        };
+
+        document.getElementById('studentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                name: document.getElementById('formName').value,
+                gender: document.getElementById('formGender').value,
+                ticketNumber: document.getElementById('formTicketNumber').value,
+                idCardLast6: document.getElementById('formIdCardLast6').value,
+                area: document.getElementById('formArea').value,
+                school: document.getElementById('formSchool').value,
+                examType: document.getElementById('formExamType').value,
+                examDate: document.getElementById('formExamDate').value,
+                roomNumber: document.getElementById('formRoomNumber').value,
+                seatNumber: document.getElementById('formSeatNumber').value
+            };
+            
+            try {
+                const url = editingStudent 
+                    ? `${API_BASE}/students/${editingStudent.id}` 
+                    : `${API_BASE}/students`;
+                const method = editingStudent ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(editingStudent ? '更新成功' : '添加成功', 'success');
+                    closeModal();
+                    loadStudents(currentPage);
+                    loadStats();
+                } else {
+                    showToast(result.message || '操作失败', 'error');
+                }
+            } catch (error) {
+                showToast('网络错误，请稍后重试', 'error');
+            }
+        });
+
+        window.confirmDelete = function(id, name) {
+            deletingStudentId = id;
+            document.getElementById('confirmMessage').textContent = `确定要删除考生「${name}」吗？此操作不可撤销。`;
+            document.getElementById('confirmModal').classList.add('show');
+        };
+
+        document.getElementById('confirmCancel').addEventListener('click', () => {
+            document.getElementById('confirmModal').classList.remove('show');
+            deletingStudentId = null;
+        });
+
+        document.getElementById('confirmDelete').addEventListener('click', async () => {
+            if (!deletingStudentId) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/students/${deletingStudentId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('删除成功', 'success');
+                    loadStudents(currentPage);
+                    loadStats();
+                } else {
+                    showToast(result.message || '删除失败', 'error');
+                }
+            } catch (error) {
+                showToast('网络错误，请稍后重试', 'error');
+            } finally {
+                document.getElementById('confirmModal').classList.remove('show');
+                deletingStudentId = null;
+            }
+        });
+
+        function openModal() {
+            document.getElementById('studentModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('studentModal').classList.remove('show');
+        }
+
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        document.getElementById('cancelBtn').addEventListener('click', closeModal);
+        document.querySelector('.modal-backdrop').addEventListener('click', closeModal);
+
+        document.getElementById('downloadTemplate').addEventListener('click', () => {
+            const template = 'name,gender,ticketNumber,area,school,examType,examDate,roomNumber,seatNumber,idCardLast6\n张三,男,20250315001,宁波,宁波中学,校考,2025-03-15,A101,01,123456';
+            const blob = new Blob([template], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '考生信息导入模板.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        const importDropZone = document.getElementById('importDropZone');
+        const importFileInput = document.getElementById('importFileInput');
+        
+        importDropZone.addEventListener('click', () => importFileInput.click());
+        document.getElementById('selectImportFile').addEventListener('click', (e) => {
+            e.stopPropagation();
+            importFileInput.click();
+        });
+        
+        importDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            importDropZone.classList.add('dragover');
+        });
+        
+        importDropZone.addEventListener('dragleave', () => {
+            importDropZone.classList.remove('dragover');
+        });
+        
+        importDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            importDropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                uploadImportFile(files[0]);
+            }
+        });
+        
+        importFileInput.addEventListener('change', () => {
+            if (importFileInput.files.length > 0) {
+                uploadImportFile(importFileInput.files[0]);
+            }
+        });
+
+        async function uploadImportFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const progressArea = importDropZone.querySelector('.upload-progress');
+            const progressFill = document.getElementById('importProgress');
+            const progressText = document.getElementById('importProgressText');
+            const resultArea = document.getElementById('importResult');
+            
+            progressArea.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressText.textContent = '上传中...';
+            resultArea.style.display = 'none';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                if (progress <= 90) {
+                    progressFill.style.width = progress + '%';
+                }
+            }, 100);
+            
+            try {
+                const response = await fetch(`${API_BASE}/upload-excel`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                clearInterval(interval);
+                progressFill.style.width = '100%';
+                
+                if (result.success) {
+                    progressText.textContent = '导入完成！';
+                    resultArea.style.display = 'block';
+                    document.getElementById('importResultContent').innerHTML = `
+                        <p class="result-success">✓ ${result.message}</p>
+                        ${result.data.errors && result.data.errors.length > 0 
+                            ? `<p class="result-errors">部分导入失败：</p><ul>${result.data.errors.map(e => `<li>${e}</li>`).join('')}</ul>` 
+                            : ''}
+                    `;
+                    loadStats();
+                    if (document.querySelector('.nav-item[data-tab="students"]').classList.contains('active')) {
+                        loadStudents(1);
+                    }
+                } else {
+                    progressText.textContent = '导入失败';
+                    showToast(result.message || '导入失败', 'error');
+                }
+            } catch (error) {
+                clearInterval(interval);
+                progressArea.style.display = 'none';
+                showToast('上传失败，请稍后重试', 'error');
+            }
+        }
+
+        const ticketsDropZone = document.getElementById('ticketsDropZone');
+        const ticketsFileInput = document.getElementById('ticketsFileInput');
+        
+        ticketsDropZone.addEventListener('click', () => ticketsFileInput.click());
+        document.getElementById('selectTicketsFile').addEventListener('click', (e) => {
+            e.stopPropagation();
+            ticketsFileInput.click();
+        });
+        
+        ticketsDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            ticketsDropZone.classList.add('dragover');
+        });
+        
+        ticketsDropZone.addEventListener('dragleave', () => {
+            ticketsDropZone.classList.remove('dragover');
+        });
+        
+        ticketsDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            ticketsDropZone.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+            if (files.length > 0) {
+                uploadTicketsFiles(files);
+            } else {
+                showToast('请上传 PDF 文件', 'error');
+            }
+        });
+        
+        ticketsFileInput.addEventListener('change', () => {
+            if (ticketsFileInput.files.length > 0) {
+                const files = Array.from(ticketsFileInput.files).filter(f => f.type === 'application/pdf');
+                if (files.length > 0) {
+                    uploadTicketsFiles(files);
+                } else {
+                    showToast('请上传 PDF 文件', 'error');
+                }
+            }
+        });
+
+        async function uploadTicketsFiles(files) {
+            const formData = new FormData();
+            files.forEach(f => formData.append('files', f));
+            
+            const progressArea = ticketsDropZone.querySelector('.upload-progress');
+            const progressFill = document.getElementById('ticketsProgress');
+            const progressText = document.getElementById('ticketsProgressText');
+            const resultArea = document.getElementById('ticketsResult');
+            
+            progressArea.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressText.textContent = '上传中...';
+            resultArea.style.display = 'none';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                if (progress <= 90) {
+                    progressFill.style.width = progress + '%';
+                }
+            }, 100);
+            
+            try {
+                const response = await fetch(`${API_BASE}/upload-tickets`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                clearInterval(interval);
+                progressFill.style.width = '100%';
+                
+                if (result.success) {
+                    progressText.textContent = '上传完成！';
+                    resultArea.style.display = 'block';
+                    document.getElementById('matchedCount').textContent = `匹配成功: ${result.data.matched}`;
+                    document.getElementById('unmatchedCount').textContent = `未匹配: ${result.data.unmatched.length}`;
+                    
+                    let content = '';
+                    if (result.data.results && result.data.results.length > 0) {
+                        content += '<p class="matched-title">成功匹配：</p><ul>';
+                        result.data.results.forEach(r => {
+                            content += `<li>${r.file} → ${r.student} (${r.ticketNumber})</li>`;
+                        });
+                        content += '</ul>';
+                    }
+                    if (result.data.unmatched && result.data.unmatched.length > 0) {
+                        content += '<p class="unmatched-title">未能匹配：</p><ul>';
+                        result.data.unmatched.forEach(u => {
+                            content += `<li>${u.file || u.originalName} - ${u.reason}</li>`;
+                        });
+                        content += '</ul>';
+                    }
+                    document.getElementById('ticketsResultContent').innerHTML = content;
+                    loadStats();
+                    if (document.querySelector('.nav-item[data-tab="students"]').classList.contains('active')) {
+                        loadStudents(currentPage);
+                    }
+                } else {
+                    progressText.textContent = '上传失败';
+                    showToast(result.message || '上传失败', 'error');
+                }
+            } catch (error) {
+                clearInterval(interval);
+                progressArea.style.display = 'none';
+                showToast('上传失败，请稍后重试', 'error');
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.querySelector('.toast-message').textContent = message;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+    </script>
+</body>
+</html>
